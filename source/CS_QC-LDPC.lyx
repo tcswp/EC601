@@ -1,0 +1,747 @@
+#LyX 2.3 created this file. For more info see http://www.lyx.org/
+\lyxformat 544
+\begin_document
+\begin_header
+\save_transient_properties true
+\origin unavailable
+\textclass IEEEtran-CompSoc
+\begin_preamble
+% for subfigures/subtables
+\usepackage[caption=false,font=normalsize,labelfont=sf,textfont=sf]{subfig}
+%\usepackage[nocompress]{cite} %optional
+\usepackage{amsmath}
+\DeclareMathOperator*{\argmin}{argmin}
+\end_preamble
+\options journal
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package none
+\inputencoding auto
+\fontencoding global
+\font_roman "default" "default"
+\font_sans "default" "default"
+\font_typewriter "default" "default"
+\font_math "auto" "auto"
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100 100
+\font_tt_scale 100 100
+\use_microtype false
+\use_dash_ligatures false
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command bibtex
+\index_command default
+\float_placement tbh
+\paperfontsize default
+\spacing single
+\use_hyperref true
+\pdf_title "Your Title"
+\pdf_author "Your Name"
+\pdf_bookmarks true
+\pdf_bookmarksnumbered true
+\pdf_bookmarksopen true
+\pdf_bookmarksopenlevel 1
+\pdf_breaklinks false
+\pdf_pdfborder true
+\pdf_colorlinks false
+\pdf_backref false
+\pdf_pdfusetitle false
+\pdf_quoted_options "pdfpagelayout=OneColumn, pdfnewwindow=true, pdfstartview=XYZ, plainpages=false"
+\papersize default
+\use_geometry false
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\biblio_style plain
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 0
+\use_minted 0
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\is_math_indent 0
+\math_numbering_side default
+\quotes_style english
+\dynamic_quotes 0
+\papercolumns 2
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+EC601 Project 1: Low-density parity-check matrices for compressive sensing
+ applications case study
+\end_layout
+
+\begin_layout Author
+Steven
+\begin_inset space ~
+\end_inset
+
+Hastings
+\end_layout
+
+\begin_layout Section
+Introduction
+\end_layout
+
+\begin_layout Standard
+The high bandwidth of modern communications technologies require very high
+ sampling rates in order to satisfy the Nyquist criterion.
+ Consequently high speed ADCs and large storage capacities are needed.
+ The high power consumption and high costs of such systems however has led
+ to the search for ways to improve performance.
+ With the advent of compressive sensing (CS), new approaches are being discovere
+d that allow for signal reconstruction at sub-Nyquist rates.
+ There are two main areas of research in CS: algorithms for reconstructions
+ e.g., basis pursuit and orthogonal matching pursuit (OMP), and finding measuremen
+t matrices that satisfy or with high probability satisfy the restricted
+ isometry property (RIP).
+ In this case study, a special type of measurement matrix is examined.
+ In coding theory, there are a class of codes known as low-density parity-check
+ (LDPC) codes.
+ For one type of LDPC construction that we will look at, the parity check
+ matrices thereof so happen to meet the RIP criteria with high probability,
+ allowing for sparse signal reconstruction under CS.
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Compressive Sensing
+\end_layout
+
+\begin_layout Standard
+Compressive sensing involves non-uniform random sampling of a signal with
+ something called an Analog to Information Converter (AIC) and reconstructing
+ the original signal using optimization techniques.
+ The signal is assumed to be sparse.
+ A signal 
+\begin_inset Formula $x$
+\end_inset
+
+ of size 
+\begin_inset Formula $N$
+\end_inset
+
+ with 
+\begin_inset Formula $K$
+\end_inset
+
+ non-zero coefficients and 
+\begin_inset Formula $N-K$
+\end_inset
+
+ zero coefficients in some transform basis such that 
+\begin_inset Formula $K\ll N$
+\end_inset
+
+ is said to be sparse, or 
+\begin_inset Formula $K$
+\end_inset
+
+-sparse.
+ Sparse signals require fewer samples to reconstruct than dense signals
+ do.
+ The system can be represented as
+\begin_inset Formula 
+\[
+y=\Phi x=\Phi\Psi s=\Theta s
+\]
+
+\end_inset
+
+where 
+\begin_inset Formula $\Phi$
+\end_inset
+
+ is the 
+\begin_inset Formula $M\times N$
+\end_inset
+
+ measurement matrix, 
+\begin_inset Formula $y$
+\end_inset
+
+ is the 
+\begin_inset Formula $M\times1$
+\end_inset
+
+ measured values, 
+\begin_inset Formula $\Psi$
+\end_inset
+
+ is the 
+\begin_inset Formula $N\times N$
+\end_inset
+
+ representation matrix, and 
+\begin_inset Formula $s$
+\end_inset
+
+ is the 
+\begin_inset Formula $N$
+\end_inset
+
+ coefficients.
+ When written in succinct form, the matrix 
+\begin_inset Formula $\Theta$
+\end_inset
+
+ is the 
+\begin_inset Formula $M\times N$
+\end_inset
+
+ reconstruction matrix.
+ If the basis is linearly dependent, it is called a frame.
+ The basis and frame are often called the dictionary, the elements of which
+ are called atoms.
+ The aim is to find 
+\begin_inset Formula $s$
+\end_inset
+
+ given 
+\begin_inset Formula $y$
+\end_inset
+
+ and 
+\begin_inset Formula $\Theta$
+\end_inset
+
+.
+ Then 
+\begin_inset Formula $x$
+\end_inset
+
+ can be easily computed with an inverse transform.
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Float figure
+placement htbp
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename images/cs_system.jpg
+	scale 75
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+The system
+\begin_inset Newline newline
+\end_inset
+
+Source: http://users.isr.ist.utl.pt/~aguiar/CS_notes.pdf
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+In most cases, the reconstruction of the signal cannot be absolutely guaranteed,
+ but under certain conditions the signal can be reconstructed with very
+ high probability.
+ The first condition that must be met is that the matrices have the restricted
+ isometry property (RIP) or have it with high probability, which simply
+ stated, means that any set of columns in the matrix are approximately orthogona
+l, or that the transform 
+\begin_inset Formula $y=\Theta s$
+\end_inset
+
+ is unitary.
+ The RIP condition is met if 
+\begin_inset Formula $\Phi$
+\end_inset
+
+ and 
+\begin_inset Formula $\Psi$
+\end_inset
+
+ are incoherent (uncorrelated).
+ The second condition is that 
+\begin_inset Formula $\text{\ensuremath{cK\log(N/K))}}$
+\end_inset
+
+ measurements be made, where 
+\begin_inset Formula $c$
+\end_inset
+
+ is a constant depending on coherence between 
+\begin_inset Formula $\Phi$
+\end_inset
+
+ and 
+\begin_inset Formula $\Psi$
+\end_inset
+
+.
+\begin_inset Newline newline
+\end_inset
+
+Because the system has fewer equations than unknowns, it is an underdetermined
+ system and has infinite solutions.
+ We are looking for the solution that is most sparse.
+ We may minimize the 
+\begin_inset Formula $\ell_{0}$
+\end_inset
+
+-norm of 
+\begin_inset Formula $s$
+\end_inset
+
+ wrt.
+ the system to obtain the sparsest solution.
+\end_layout
+
+\begin_layout Standard
+The 
+\begin_inset Formula $\ell_{0}$
+\end_inset
+
+-norm–rigorously speaking it is not a norm, so it is often referred to as
+ a pseudonorm–or sparse norm counts the number of non-zero elements.
+ 
+\begin_inset Formula 
+\[
+||s||_{0}=\lim_{p\rightarrow0}\sum_{k}|s_{k}|^{p}
+\]
+
+\end_inset
+
+However, for 
+\begin_inset Formula $0<p<1$
+\end_inset
+
+, finding the global minimum is intractible as it is an NP-hard problem,
+ meaning there is no known algorithm that can solve the optimization problem
+ in polynomial time.
+ The 
+\begin_inset Formula $\ell_{1}$
+\end_inset
+
+-norm approximates the 
+\begin_inset Formula $\ell_{0}$
+\end_inset
+
+-norm in many cases as can be seen geometrically in Figure 2.
+ It is also known as the Taxicab norm and the Manhattan norm because it
+ measures the distance a taxicab would have to drive to reach its destination
+ in certain parts of Manhattan (where the streets form a gridlike structure).
+\begin_inset Formula 
+\[
+||s||_{1}=\sum_{k}|s_{k}|
+\]
+
+\end_inset
+
+By the triangle inequality, it can be shown that the 
+\begin_inset Formula $\ell_{1}$
+\end_inset
+
+-norm is a convex function, and we will therefore need to employ convex
+ optimization methods in order to minimize it.
+ But it is possible to convert the problem to a linear programming problem
+ which is more computationally efficient.
+\begin_inset Float figure
+placement htbp
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename images/p-norms.png
+	scale 25
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+p-norms
+\begin_inset Newline newline
+\end_inset
+
+Source: https://www.researchgate.net/figure/Spheres-of-the-L-p-norm-and-their-inte
+rsections-marked-by-stars-with-the-null-space_fig3_325593608
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Minimizing the 
+\begin_inset Formula $\ell_{1}$
+\end_inset
+
+-norm is known in the literature as Basis Pursuit (BP).
+ 
+\begin_inset Formula 
+\[
+\hat{s}=\argmin_{s:y=\Theta s}||s||_{1}
+\]
+
+\end_inset
+
+In the presence of noise, the system is expressed as 
+\begin_inset Formula $y=\Theta s+\eta$
+\end_inset
+
+.
+ The energy of the noise is bounded by a constant 
+\begin_inset Formula $\epsilon$
+\end_inset
+
+: 
+\begin_inset Formula $\|\eta||_{2}=||y-\Theta s||_{2}\leq\epsilon$
+\end_inset
+
+.
+ The optimization problem can then be written as follows
+\begin_inset Formula 
+\[
+\hat{s}=\argmin_{s:||y-\Theta s||_{2}\leq\epsilon}||s||_{1}
+\]
+
+\end_inset
+
+ Other methods such as Orthogonal Matching Pursuit (OMP) use a greedy heuristic
+ algorithm to solve the system.
+ OMP is faster and has a simpler implementation than BP, but requires more
+ measurements than BP.
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+In this case study, our focus is the measurement matrix rather than reconstructi
+on algorithms.
+ The Gaussian, and Bernoulli random matrices as well as Fourier matrices
+ have been shown to satisfy RIP with high probability.
+ Gaussian matrices are the most popular in the literature.
+ They have very good orthogonality but have a relatively high computational
+ load because of their randomness and density.
+ A deterministic matrix with high orthogonality and an efficient implementation
+ would be ideal.
+ Such a class of matrices exist.
+ The parity check matrix of the low-density parity-check (LDPC) code used
+ in error correction has these properties.
+\end_layout
+
+\begin_layout Section
+Coding Theory
+\end_layout
+
+\begin_layout Standard
+LDPC codes are a type of error-correcting code often used in communications,
+ specifically Ethernet, digital TV, satellite communications, as well as
+ in SSD hard drives.
+ LDPC codes are linear block codes that are subject to sparsity and orthogonalit
+y constraints for purposes of efficiency, which can be exploited by compressive
+ sensing algorithms.
+ The LDPC code is defined by the null space of the LDPC parity check matrix.
+ The codes are represented using something called a Tanner graph.
+ Tanner graphs are bipartite graphs--graphs that can be divided into two
+ disjoint sets of vertices where none of the vertices in the same set are
+ adjacent to each other.
+ One set corresponds to data bits, and the other set parity check bits.
+ The eponymous Gallager code, the original LDPC code, used a pseudo-random
+ number generator (PRNG) to generate the graph.
+ Gallager showed that randomized relationships between the data and parity
+ bits allowed error correction.
+ Later, structured constructions (non-random) were discovered.
+ One such construction is the quasi-cyclic LDPC (QC-LDPC) code, which are
+ used in 5G nr communications.
+ The QC-LDPC parity check matrix consists of circulant submatrices (Figure
+ 3).
+ A permutation or shift matrix determines how much to shift each row of
+ a given submatrix.
+ The permutation matrix is generated using a progressive edge-growth (PEG)
+ algorithm that aims to maximize the girth of the parity check matrix.
+ Girth–the length of the smallest cycle–corresponds to the degree of orthogonali
+ty in a matrix representation.
+ A QC-LDPC matrix with a large girth should meet the requirements of the
+ RIP with high probability.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement htbp
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/qc-ldpc_pcm.png
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Example of an LDPC parity check matrix
+\begin_inset Newline newline
+\end_inset
+
+Source: https://www.researchgate.net/figure/Parity-check-matrix-for-QC-LDPC-codes_
+fig5_224149189
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Methodology
+\end_layout
+
+\begin_layout Standard
+The goal is to construct LDPC matrices with a large girth 
+\begin_inset Formula $g$
+\end_inset
+
+.
+ However, as the the size of the matrix and number of non-zero elements
+ increases, the cycle lengths tend to decrease.
+ So for a desired degree of column sparsity 
+\begin_inset Formula $d$
+\end_inset
+
+, we try to find the largest 
+\begin_inset Formula $g$
+\end_inset
+
+ possible.
+ The parity check matrix is constructed using PEG algorithms for different
+ compression ratios and sizes.
+\end_layout
+
+\begin_layout Section
+Results
+\end_layout
+
+\begin_layout Standard
+Using mean-square error (MSE) as one performance metric, it was found that
+ LDPC matrices of various sizes significantly outperform Gaussian and sparse
+ random matrices of equivalent size beyond a certain 
+\begin_inset Formula $d$
+\end_inset
+
+ depending on the size of the matrix.
+ Figure 4.
+ shows a comparison of the MSE using LDPC, Gaussian, and sparse random matrices
+ of size 1024x4096 with sparsity 
+\begin_inset Formula $k=200$
+\end_inset
+
+ and 
+\begin_inset Formula $k=300$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement htbp
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/mse_comparison.JPG
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+MSE comparison.
+ Source: [1]
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Summary & Conclusions
+\end_layout
+
+\begin_layout Standard
+LDPC matrices as measurement matrices have been shown to outperform Gaussian
+ matrices in the MSE of the reconstructed signal.
+ In addition, the non-random quasi-cyclic construction lends itself well
+ to shift-register architecture allowing for more efficient processing in
+ hardware than hardware for generating Gaussian random variables.
+\end_layout
+
+\begin_layout Section
+Future work
+\end_layout
+
+\begin_layout Standard
+The next steps were I to continue on this topic in the future would be to
+ try and reproduce the results in [1] and [2] and tune the parameters for
+ an application of interest.
+ One application worth exploring is pulse compression radar.
+ Some research [4] has found that Costas coded radar pulses can be reconstructed
+ at as much 16x below the Nyquist rate! It would be interesting to see if
+ using LDPC rather than Gaussian measurement matrices, as were used in the
+ study, would yield even more precise reconstructions at such low sampling
+ rates.
+\end_layout
+
+\begin_layout Bibliography
+\begin_inset CommandInset bibitem
+LatexCommand bibitem
+key "key-1"
+literal "false"
+
+\end_inset
+
+W.
+ Lu, Kidiyo Kpalma, and J.
+ Ronsin, “Sparse Binary Matrices of LDPC Codes for Compressed Sensing,”
+ HAL (Le Centre pour la Communication Scientifique Directe), Apr.
+ 2012, doi: https://doi.org/10.1109/dcc.2012.60.
+\end_layout
+
+\begin_layout Bibliography
+\begin_inset CommandInset bibitem
+LatexCommand bibitem
+key "key-2"
+literal "false"
+
+\end_inset
+
+Y.
+ Wang, Y.
+ Qin, and H.
+ Ren, “Deterministic Construction of Compressed Sensing Measurement Matrix
+ with Arbitrary Sizes via QC-LDPC and Arithmetic Sequence Sets,” Electronics,
+ vol.
+ 12, no.
+ 9, pp.
+ 2063–2063, Apr.
+ 2023, doi: https://doi.org/10.3390/electronics12092063.
+\end_layout
+
+\begin_layout Bibliography
+\begin_inset CommandInset bibitem
+LatexCommand bibitem
+key "key-2"
+
+\end_inset
+
+‌S.
+ L.
+ Brunton and J Nathan Kutz, Data-Driven Science and Engineering Machine
+ Learning, Dynamical Systems, and Control.
+ Cambridge University Press, 2019.
+\end_layout
+
+\begin_layout Bibliography
+\begin_inset CommandInset bibitem
+LatexCommand bibitem
+key "key-5"
+
+\end_inset
+
+A.
+ Hanif, A.
+ B.
+ Mansoor, and A.
+ S.
+ Imran, “Sub-Nyquist sampling and detection in Costas coded pulse compression
+ radars,” EURASIP Journal on Advances in Signal Processing, vol.
+ 2016, no.
+ 1, Nov.
+ 2016, doi: https://doi.org/10.1186/s13634-016-0424-1.
+\end_layout
+
+\end_body
+\end_document
