@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Find Route with Least Traffic</title>
+  <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places"></script>
+</head>
+<body>
+  <div id="map" style="height: 400px; width: 100%;"></div>
+  <script>
+    function initMap() {
+      const directionsService = new google.maps.DirectionsService();
+      const directionsRenderer = new google.maps.DirectionsRenderer();
+      const map = new google.maps.Map(document.getElementById("map"), {
+        zoom: 14,
+        center: { lat: YOUR_START_LATITUDE, lng: YOUR_START_LONGITUDE },
+      });
+      directionsRenderer.setMap(map);
+
+      const request = {
+        origin: { lat: YOUR_START_LATITUDE, lng: YOUR_START_LONGITUDE },
+        destination: { lat: YOUR_DEST_LATITUDE, lng: YOUR_DEST_LONGITUDE },
+        travelMode: "DRIVING",
+        avoid: ["ferries"],
+        provideRouteAlternatives: true,
+      };
+
+      directionsService.route(request, function (result, status) {
+        if (status == "OK") {
+          let leastTrafficRoute = result.routes[0];
+          for (let i = 1; i < result.routes.length; i++) {
+            if (result.routes[i].legs[0].duration.value < leastTrafficRoute.legs[0].duration.value) {
+              leastTrafficRoute = result.routes[i];
+            }
+          }
+          directionsRenderer.setDirections({ routes: [leastTrafficRoute] });
+        }
+      });
+    }
+  </script>
+  <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap">
+  </script>
+</body>
+</html>
